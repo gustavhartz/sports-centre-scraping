@@ -87,6 +87,7 @@ class PlaytomicScraper(APIScraper):
         self.logger.info(f"Processing data for Playtomic")
         results = []
         for resource in data:
+            start_date = resource["start_date"]
             for slot in resource["slots"]:
                 resource_id = resource["resource_id"]
                 start_time = slot["start_time"]
@@ -96,7 +97,8 @@ class PlaytomicScraper(APIScraper):
                     {
                         "court_id": resource_id,
                         "sport": "PADEL",
-                        "date": start_time,
+                        "date": start_date,
+                        "start_time": start_time,
                         "slot_type": "PADEL",
                         "duration": duration,
                         "price": price,
@@ -161,7 +163,7 @@ class GotCourtsScraper(APIScraper):
                             "slotContext": slotContext,
                             "court": name,
                             "extraction_time": extraction_time,
-                            "slot": f"{startTime.strftime('%Y-%m-%d')} - {endTime.strftime('%Y-%m-%d')}",
+                            "slot": f"{startTime.strftime('%Y-%m-%dT%H:%M:%S')} - {endTime.strftime('%Y-%m-%dT%H:%M:%S')}",
                             "surfaceType": surfaceType,
                             "courtType": courtType,
                             "length": (endTime - startTime).seconds / 3600,
@@ -255,19 +257,19 @@ def test():
         api_config=API_CONFIGS["GotCourts"][0],
         base_url="https://app-api.gotcourts.com/v1/prod/slots/club/",
         headers={},
-        output_file="data/GotCourts.csv",
+        output_file="data/GotCourtsTest.csv",
     ).scrape_api_config()
     PlaytomicScraper(
         api_config=API_CONFIGS["Playtomic"][0],
         base_url="https://playtomic.io/api/v1/availability",
         headers={},
-        output_file="data/Playtomic.csv",
+        output_file="data/PlaytomicTest.csv",
     ).scrape_api_config()
     MatchiScraper(
         api_config=API_CONFIGS["Matchi"][0],
         base_url="https://www.matchi.se/book/schedule",
         headers={},
-        output_file="data/Matchi.csv",
+        output_file="data/MatchiTest.csv",
     ).scrape_api_config()
 
 
